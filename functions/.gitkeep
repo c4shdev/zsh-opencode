@@ -1,5 +1,1 @@
-# This file ensures the `functions/` directory is preserved in the git tree
-# even when _opencode is gitignored. Zimfw detects the module layout
-# (`init.zsh` + `functions/`) at install time, so the directory must exist
-# on a fresh clone. The actual `_opencode` completion is generated lazily
-# by init.zsh on first shell start.
+# Keeps functions/ tracked so Zimfw detects the module layout.
