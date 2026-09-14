@@ -1,10 +1,6 @@
 #!/usr/bin/env zsh
-#
-# init.zsh — Core implementation. Auto-sourced by Zimfw (default source
-# when functions/ exists). oh-my-zsh and standalone users reach it via
-# zsh-opencode.plugin.zsh.
+# init.zsh — core (Zimfw auto-source; omz/standalone via .plugin.zsh).
 
-# --- PATH setup ---
 if ! command -v opencode &>/dev/null; then
   _opencode_bin_dir="${OPENCODE_BIN:-${HOME}/.opencode/bin}"
   if [[ -d "$_opencode_bin_dir" && ":$PATH:" != *":${_opencode_bin_dir}:"* ]]; then
@@ -13,9 +9,7 @@ if ! command -v opencode &>/dev/null; then
   unset _opencode_bin_dir
 fi
 
-# --- Lazy completion regeneration ---
-# mtime check (bin -nt cache) avoids the ~600ms cost of `opencode --version`
-# on every shell start. Cache path is <module-root>/functions/_opencode.
+# mtime check avoids invoking `opencode --version` (~600ms) on every shell start.
 _opencode_compfile="${${(%):-%x}:A:h}/functions/_opencode"
 _opencode_bin="${OPENCODE_BIN:-${HOME}/.opencode/bin}/opencode"
 if [[ -x "$_opencode_bin" ]]; then
@@ -26,7 +20,6 @@ if [[ -x "$_opencode_bin" ]]; then
 fi
 unset _opencode_bin _opencode_compfile
 
-# --- Aliases ---
 command -v opencode &>/dev/null && {
   alias oc='opencode'
   alias ocr='opencode run'
