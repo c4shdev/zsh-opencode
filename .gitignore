@@ -1,0 +1,3 @@
+# Completion file generated lazily by init.zsh on first shell start.
+# Contains binary-version-specific completion data; not safe to commit.
+functions/_opencode

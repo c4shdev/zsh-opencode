@@ -1,11 +1,16 @@
 #!/usr/bin/env zsh
 #
-# zsh-opencode.zsh — Core implementation.
+# init.zsh — Core implementation (Zimfw default source).
 #
 # Provides:
 #   - PATH setup (only if opencode binary is not already resolvable)
 #   - Lazy regeneration of completion file (mtime-based, no --version cost)
 #   - Common aliases (curated selection)
+#
+# This file is auto-sourced by Zimfw because the module has a `functions/`
+# subdirectory; see https://zimfw.github.io/docs/ for the default detection
+# rules. oh-my-zsh and standalone users get the same behavior via the
+# `zsh-opencode.plugin.zsh` shim that sources this file.
 #
 # Performance notes:
 #   - Uses `[[ bin -nt cache ]]` (mtime check) instead of `$(bin --version)`
@@ -27,24 +32,15 @@ if ! command -v opencode &>/dev/null; then
 fi
 
 # --- 2. Lazy completion regeneration ---
-# Determine the completion file location based on plugin manager context.
-_opencode_compfile=""
-if [[ -n "${ZSH_COMPDUMP:-}" || -n "${ZIM_HOME:-}" ]]; then
-  # Zimfw or generic zsh: completion files must be in fpath to be discovered
-  # by compinit. We write next to this file in completions/_opencode.
-  _opencode_compfile="${${(%):-%x}:A:h}/completions/_opencode"
-elif [[ -n "${ZSH/plugins:-}" || -d "${ZSH:-${HOME}/.oh-my-zsh}/plugins" ]]; then
-  # oh-my-zsh: completions live in the plugin dir; compinit auto-discovers.
-  _opencode_compfile="${${(%):-%x}:A:h}/completions/_opencode"
-else
-  # Standalone: use ~/.cache/zsh/ if available, else skip completion.
-  _opencode_compfile="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/_opencode"
-  [[ -d "${_opencode_compfile:h}" ]] || mkdir -p "${_opencode_compfile:h}"
-fi
-
+# Resolves to <module-root>/functions/_opencode. This path is in fpath when
+# the module is installed via Zimfw (fpath defaults to `functions/`) or
+# oh-my-zsh (plugin dir auto-added to fpath by compinit). For standalone
+# usage, the user must add `<module-root>/functions` to fpath before compinit.
+_opencode_compfile="${${(%):-%x}:A:h}/functions/_opencode"
 _opencode_bin="${OPENCODE_BIN:-${HOME}/.opencode/bin}/opencode"
 if [[ -x "$_opencode_bin" ]]; then
-  # Ensure parent dir exists.
+  # Ensure parent dir exists (always true here, kept for symmetry with the
+  # standalone-cache fallback below).
   [[ -d "${_opencode_compfile:h}" ]] || mkdir -p "${_opencode_compfile:h}"
   # mtime-based invalidation: regenerate ONLY when binary is newer than cache.
   if [[ ! -f "$_opencode_compfile" || "$_opencode_bin" -nt "$_opencode_compfile" ]]; then

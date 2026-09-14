@@ -1,26 +1,18 @@
 #!/usr/bin/env zsh
 #
-# zsh-opencode.plugin.zsh — Universal entry point.
+# zsh-opencode.plugin.zsh — Shim for oh-my-zsh and standalone usage.
 #
-# Compatible con:
-#   - Zimfw (clonado a ~/.zim/modules/zsh-opencode/)
-#   - oh-my-zsh (como plugin de la lista `plugins`)
-#   - Standalone (source directo en .zshrc o .zprofile)
+# Zimfw auto-detects `init.zsh` as the entry point when `functions/` exists,
+# so this file is NOT used by Zimfw (see https://zimfw.github.io/docs/).
 #
-# Detecta el contexto y delega al archivo de implementación.
+# oh-my-zsh looks for `<name>.plugin.zsh` in the plugin dir and `compinit`
+# auto-adds the plugin dir to fpath, so `_opencode` is found under `functions/`.
+#
+# Standalone users must add `<module>/functions` to fpath BEFORE compinit:
+#
+#     fpath=(~/path/to/zsh-opencode/functions $fpath)
+#     autoload -Uz compinit && compinit
+#     source ~/path/to/zsh-opencode/zsh-opencode.plugin.zsh
 #
 
-# Resolver el directorio del módulo de forma portable.
-# ${0:A:h} funciona en sourcing desde archivo; fallback a $funcstack para omz.
-_opencode_plugin_dir="${${(%):-%x}:A:h}"
-if [[ ! -d "$_opencode_plugin_dir" ]]; then
-  # Fallback para contextos donde ${(%):-%x} no resuelve (ej. eval)
-  _opencode_plugin_dir="${ZSH_PLUGINS_DIR:-${ZDOTDIR:-${HOME}/.config/zsh}/modules/zsh-opencode}"
-fi
-
-# Source de la implementación principal si existe.
-if [[ -f "${_opencode_plugin_dir}/zsh-opencode.zsh" ]]; then
-  source "${_opencode_plugin_dir}/zsh-opencode.zsh"
-fi
-
-unset _opencode_plugin_dir
+source "${0:A:h}/init.zsh"
