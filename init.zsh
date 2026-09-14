@@ -9,7 +9,6 @@ if ! command -v opencode &>/dev/null; then
   unset _opencode_bin_dir
 fi
 
-# mtime check avoids invoking `opencode --version` (~600ms) on every shell start.
 _opencode_compfile="${${(%):-%x}:A:h}/functions/_opencode"
 _opencode_bin="${OPENCODE_BIN:-${HOME}/.opencode/bin}/opencode"
 if [[ -x "$_opencode_bin" ]]; then
